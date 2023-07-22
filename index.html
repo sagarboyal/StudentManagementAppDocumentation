@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Javascript Documentation</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <nav>
+        <h1>Student Management Application Documentation</h1>
+        <ul>
+          <a href="#Introduction"><li>Introduction</li></a>
+          <a href="#Project setup"><li>Project setup</li></a>
+          <a href="#JDBC connection"><li>JDBC connection</li></a>
+          <a href="#Implementation StudentDao"><li>Implementation StudentDao</li></a>
+          <a href="#Main Application"><li>Main Application</li></a>
+          <a href="https://github.com/sagarboyal/Student-Management-Application"><li>Source Code</li></a>
+        </ul>
+      </nav>
+    </header>
+    <main>
+      <section id="Introduction">
+        <h2>Introduction</h2>
+        <article>
+          <p>
+            Creating a full-fledged Student Management application using JDBC involves multiple components, 
+            such as database setup, creating Java classes for database access, 
+            and implementing the user interface. 
+            Below, I'll provide a simplified outline of the steps involved to give you a basic idea of how to proceed.
+            Keep in mind that this is a high-level overview, 
+            and actual implementation details can vary based on your specific requirements.
+          </p>
+        </article>
+      </section>
+
+      <section id="Project setup">
+        <h2>Project setup</h2>
+        <article>
+            <p>This guide assumes you have the following basic background:</p>
+            <h3>Database Setup</h3>
+            <ul>
+                <li>
+                Install a relational database management system (e.g., MySQL, PostgreSQL).
+                </li>
+                <li>
+                Create a new database schema (e.g., "student_db") to store student-related information.
+                <code>
+                  mysql> create database student_management_system;
+                  Query OK, 1 row affected (0.01 sec)
+                </code>
+                <p>
+                  Note: You can use any database name you want, but make sure to use the same name in your Java code.
+                  After creating the database, you can use the "use" command to switch to the new database.
+                </p>
+                <code>
+                  mysql> use student_management_system;
+                  Database changed
+                </code>
+                </li>
+                <li>
+                Create a table (e.g., "students") to store student data, including attributes like ID, name, city, course, etc.
+                <code>
+                  mysql> create table students(
+                  ->     id int primary key auto_increment,
+                  ->     name varchar(50) not null,
+                  ->     mobile_number varchar(10),
+                  ->     city varchar(50)
+                  ->     );
+                  Query OK, 0 rows affected (0.02 sec)
+                </code>
+                </li>
+            </ul>
+            <h3>Java Classes</h3>
+            <ul>
+                <li>
+                    Create a Student class to represent the student entity. 
+                    This class should have fields that correspond to the attributes in the "students" table.
+                    <code>
+                      public class Student {
+                        private int id;
+                        private String name;
+                        private String mobileNumber;
+                        private String city;
+                        // Constructors, getters, setters, and other methods.
+                      }
+                    </code>
+                </li>
+                <li>
+                    Implement a StudentDAO (Data Access Object) class to handle database interactions. 
+                    This class should have methods for CRUD operations (Create, Read, Update, Delete) on the "students" table.
+                    <code>
+                      public class StudentDAO {
+                        public Student viewStudent(int id) { ... }
+                        public List<<span>Student</span>> viewAllStudents() { ... }
+                        public boolean insertStudent(Student student) { ... }
+                        public boolean updateStudent(int id) { ... }
+                        public boolean deleteStudent(int id) { ... }
+                      }
+                    </code>
+                </li>
+                <li>
+                    In the StudentDAO class, 
+                    establish the JDBC connection to the database, and implement methods to insert, retrieve, update, and delete student records.
+                </li>
+            </ul>
+        </article>
+      </section>
+
+      <section id="JDBC connection">
+        <h2>JDBC connection</h2>
+        <article>
+          <ul>
+            <li>
+              Create a new Java project in Eclipse IDE (or any other IDE of your choice).
+            </li>
+            <li>
+              Add the JDBC driver JAR file to the project's build path.
+            </li>
+            <li>
+              Create a new package (e.g., "connection") to store the database connection class.
+            </li>
+            <li>
+              Create a new Java class (e.g., "Cn") in the package to establish the database connection.
+            </li>
+            <li>
+              Use the appropriate JDBC driver to connect to your database (e.g., MySQL JDBC driver for MySQL).
+            </li>
+            <li>
+              Provide the necessary database connection details (URL, username, password) in the Cn class .
+              <code>
+                package connection;
+                import java.sql.Connection;
+                import java.sql.DriverManager;
+    
+                public class Cn {
+                  static Connection connection;
+                  public static Connection createConnection() throws Exception{
+                      // Load Class Driver it can may throw ClassNotFoundException
+                      Class.forName("com.mysql.jdbc.Driver");
+                      
+                      // Establish Connection
+                      String user = "root";
+                      String password = "sagar12345";
+                      String url = "jdbc:mysql://localhost:3306/student_management_system";
+                      // getConnection it can may throw SQLException
+                      connection = DriverManager.getConnection(url, user, password);
+                    return connection;
+                  }
+                }
+              </code>
+            </li>
+            <li>
+              Replace 'mydatabase', 'your_username', and 'your_password' in the code above with your actual database name, username, and password, 
+              respectively.
+
+              In the example above, we first load the MySQL JDBC driver using Class.forName("com.mysql.cj.jdbc.Driver"). 
+              Then, we establish a connection to the database using DriverManager.getConnection(dbUrl, username, password), 
+              where dbUrl is the connection URL that includes the database name and connection details.
+            </li>
+            <li>
+              Establishing a database connection can throw an exception, so we need to handle it appropriately in StudentDao Class.
+              <code>
+                public class StudentDao{
+                  public Connection connection;
+                  
+                  public StudentDao() throws SQLException{
+                    // TODO Auto-generated constructor stub
+                      connection  = Cn.createConnection();
+                  }
+                  public void close() throws SQLException {
+                    connection.close();
+                  }
+                } 
+              </code>
+            </li>
+          </ul>
+         
+        </article>
+      </section>
+      <section id="Implementation StudentDao">
+        <h2>Implementation StudentDao Class for CURD Operation</h2>
+        <article>
+          Let's go through the StudentDAO class implementation step-by-step with explanations for each method:
+          <ul>
+            <li>
+              <b>Constractor: </b>The constructor initializes the StudentDAO object and establishes a 
+              connection to the database.
+              <code>
+                public StudentDao() throws SQLException{
+                  // TODO Auto-generated constructor stub
+                    connection  = Cn.createConnection();
+                }
+              </code>
+            </li>
+            <li>
+              <b>Insert Student: </b> This method adds a new student record to the database. 
+              It takes a Student object as a parameter and uses a prepared statement to insert the student's 
+              name, phone number, and city into the "students" table.
+              <code>
+                public boolean insertStudent(Student student) throws SQLException {
+                  String query = "insert into students (name, mobile_number, city) values (?, ?, ?)";
+                  PreparedStatement pStatement = connection.prepareStatement(query);
+                  pStatement.setString(1, student.getStudentName());
+                  pStatement.setString(2, student.getStudentPhNumber());
+                  pStatement.setString(3, student.getStudentCity());
+                  int rowsInserted = pStatement.executeUpdate();
+                  if (rowsInserted > 0) {
+                    return true;
+                  }
+                  return false;
+                }
+              </code>
+            </li>
+            <li>
+              <b>View Student: </b> This method retrieves a student record from the database based on the student's ID. 
+              It takes the student ID as a parameter and uses a prepared statement to retrieve the student's name, 
+              phone number, and city from the "students" table.
+              <code>
+                public Student viewStudent(int id) throws SQLException {
+                  Student student = null;
+                  String query = "select * from students where id = ?";
+                  PreparedStatement pStatement = connection.prepareStatement(query);
+                  pStatement.setInt(1, id);
+                  ResultSet resultSet = pStatement.executeQuery();
+                  while (resultSet.next()) {
+                    student = new Student();
+                    student.setStudentId(resultSet.getInt("id"));
+                    student.setStudentName(resultSet.getString("name"));
+                    student.setStudentPhNumber(resultSet.getString("mobile_number"));
+                    student.setStudentCity(resultSet.getString("city"));
+                  }
+                  return student;
+                }
+              </code>
+              Also we can do this using Statement
+              <code>
+                public Student viewStudent(int id) throws SQLException {
+                  Student student = null;
+                  String query = "select * from students where id = "+id;
+                  Statement statement = connection.createStatement();
+                  ResultSet resultSet = statement.executeQuery(query);
+                  if (resultSet.next()) {
+                    student = new Student();
+                    student.setStudentId(resultSet.getInt("id"));
+                    student.setStudentName(resultSet.getString("name"));
+                    student.setStudentPhNumber(resultSet.getString("mobile_number"));
+                    student.setStudentCity(resultSet.getString("city"));
+                  }
+                  return student;
+                }
+              </code>
+            </li>
+            <li>
+              <b>View All Students: </b> This method retrieves all student records from the database. 
+              It uses a prepared statement to retrieve all student records from the "students" table.
+              <code>
+                public List<<span>Student</span>> viewAllStudents() throws SQLException {
+                  List<<span>Student</span>> students = new ArrayList<>();
+                  String query = "select * from students";
+                  PreparedStatement pStatement = connection.prepareStatement(query);
+                  ResultSet resultSet = pStatement.executeQuery();
+                  while (resultSet.next()) {
+                    Student student = new Student();
+                    student.setStudentId(resultSet.getInt("id"));
+                    student.setStudentName(resultSet.getString("name"));
+                    student.setStudentPhNumber(resultSet.getString("mobile_number"));
+                    student.setStudentCity(resultSet.getString("city"));
+                    students.add(student);
+                  }
+                  return students;
+                }
+              </code>
+            </li>
+            <li>
+              <b>Update Student: </b> This method updates an existing student record in the database. 
+              It takes a Student object as a parameter and uses a prepared statement to update the student's 
+              name, phone number, and city in the "students" table.
+              we can update passing object or passing id
+              Lets see passing object: 
+              <code>
+                public boolean updateStudent(Student student) throws SQLException {
+                  String query = "update students set name = ?, mobile_number = ?, city = ? where id = ?";
+                  PreparedStatement pStatement = connection.prepareStatement(query);
+                  pStatement.setString(1, student.getStudentName());
+                  pStatement.setString(2, student.getStudentPhNumber());
+                  pStatement.setString(3, student.getStudentCity());
+                  pStatement.setInt(4, student.getStudentId());
+                  int rowsUpdated = pStatement.executeUpdate();
+                  if (rowsUpdated > 0) {
+                    return true;
+                  }
+                  return false;
+                }
+              </code>
+              passing id:
+              <code>
+                public boolean updateStudent(int studentId,String name, String phone, String city) throws SQLException{
+                  String query = "update students set name = ?, phone_number = ?, city = ? where id = ?";
+                  PreparedStatement preparedStatement = connection.prepareStatement(query);
+                  preparedStatement.setString(1, name);
+                  preparedStatement.setString(2, phone);
+                  preparedStatement.setString(3, city);
+                  preparedStatement.setInt(4, studentId);
+                  preparedStatement.executeUpdate();
+                  return true;
+                }
+              </code>
+            </li>
+            <li>
+              <b>Delete Student: </b> This method deletes an existing student record from the database. 
+              It takes the student ID as a parameter and uses a prepared statement to delete the student's 
+              record from the "students" table.
+              <code>
+                public boolean deleteStudent(int id) throws SQLException {
+                  String query = "delete from students where id = ?";
+                  PreparedStatement pStatement = connection.prepareStatement(query);
+                  pStatement.setInt(1, id);
+                  int rowsDeleted = pStatement.executeUpdate();
+                  if (rowsDeleted > 0) {
+                    return true;
+                  }
+                  return false;
+                }
+              </code>
+            </li>
+            <li>
+              <b>Close Connection: </b> This method closes the database connection.
+              <code>
+                public void close() throws SQLException {
+                  connection.close();
+                }
+              </code>
+            </li>
+            <li>
+              With this StudentDAO class, you can now perform CRUD operations on the "students" table in the database. 
+              You can create an instance of the StudentDAO class, use its methods to interact with the database, 
+              and call closeConnection() when you're done with the database operations to release resources.
+            </li>
+          </ul>
+        </article>
+      </section>
+      <section id="Main Application">
+        <h2>Main Application</h2>
+        <article>
+          <p>
+            In the main application, we create a new StudentDAO object with the appropriate database connection details. 
+            Then, we demonstrate how to use the StudentDAO methods to add a new student, retrieve all students, 
+            get a specific student by ID, update a student's details, and delete a student. The output will show the relevant details 
+            after each operation.
+          </p>
+          <ul>
+            <li>
+              <b>Database Connection Details: </b>In the main application, we start by providing the necessary database connection details.   
+            </li>
+            <li>
+              <b>Creating StudentDAO Object: </b>Next, we create a new StudentDAO object with the appropriate database connection details.
+              <code>
+                public class Main {
+                  public static void main(String[] args) throws Exception {
+                    StudentDao service = new StudentDao();
+                  }
+                }
+              </code>
+            </li>
+            <li>
+              <b>Insert Student: </b>Then, we create a new Student object and use the StudentDAO object to insert the student record into the database.
+              <code>
+                public class Main {
+                  public static void main(String[] args) throws Exception {
+                    StudentDao service = new StudentDao();
+                    Student student = new Student();
+                    student.setStudentName("Sagar");
+                    student.setStudentPhNumber("1234567890");
+                    student.setStudentCity("Pune");
+                    boolean result = service.insertStudent(student);
+                    if (result) {
+                      System.out.println("Student added successfully.");
+                    } else {
+                      System.out.println("Student not added.");
+                    }
+                  }
+                }
+              </code>
+            </li>
+            <li>
+              <b>View All Students: </b>Next, we use the StudentDAO object to retrieve all student records from the database.
+              <code>
+                public class Main {
+                  public static void main(String[] args) throws Exception {
+                    StudentDao service = new StudentDao();
+                    List<<span>Student</span>> students = service.viewAllStudents();
+                    for (Student student : students) {
+                      System.out.println(student);
+                    }
+                  }
+                }
+              </code>
+            </li>
+            <li>
+              <b>View Student: </b>Next, we use the StudentDAO object to retrieve a specific student record from the database.
+              <code>
+                public class Main {
+                  public static void main(String[] args) throws Exception {
+                    StudentDao service = new StudentDao();
+                    Student student = service.viewStudent(1);
+                    System.out.println(student);
+                  }
+                }
+              </code>
+            </li>
+            <li>
+              <b>Update Student: </b>Next, we use the StudentDAO object to update a student record in the database.
+              <code>
+                public class Main {
+                  public static void main(String[] args) throws Exception {
+                    StudentDao service = new StudentDao();
+                    Student student = new Student();
+                    student.setStudentId(1);
+                    student.setStudentName("Sagar");
+                    student.setStudentPhNumber("1234567890");
+                    student.setStudentCity("Pune");
+                    boolean result = service.updateStudent(student);
+                    if (result) {
+                      System.out.println("Student updated successfully.");
+                    } else {
+                      System.out.println("Student not updated.");
+                    }
+                  }
+                }
+              </code>
+            </li>
+            <li>
+              <b>Delete Student: </b>Finally, we use the StudentDAO object to delete a student record from the database.
+              <code>
+                public class Main {
+                  public static void main(String[] args) throws Exception {
+                    StudentDao service = new StudentDao();
+                    boolean result = service.deleteStudent(1);
+                    if (result) {
+                      System.out.println("Student deleted successfully.");
+                    } else {
+                      System.out.println("Student not deleted.");
+                    }
+                  }
+                }
+              </code>
+            </li>
+            <li>
+              <b>Close Connection: </b>Finally, we call the closeConnection() method to release resources.
+              <code>
+                public class Main {
+                  public static void main(String[] args) throws Exception {
+                    StudentDao service = new StudentDao();
+                    service.close();
+                  }
+                }
+              </code>
+            </li>
+          </ul>
+          <p>
+            This main application demonstrates how to use the StudentDAO class to interact with the database, 
+            perform CRUD operations, and manipulate student records.But in a real-world application, 
+            you would implement better error handling, validation, and possibly a more sophisticated user interface. 
+            However, this example provides a basic understanding of how to use the StudentDAO class in a simple command-line application.
+            i will provide a good user interface for this application in some time later.
+          </p>
+        </article>
+      </section>
+    </main>
+  </body>
+</html>
